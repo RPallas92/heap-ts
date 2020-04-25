@@ -1,0 +1,9 @@
+{
+  "name": "heap-ts",
+  "version": "1.0.0",
+  "description": "Heap data structure implemented in TypeScript",
+  "main": "index.js",
+  "repository": "https://github.com/RPallas92/heap-ts.git",
+  "author": "Richi Pallas <ricardo.pallas@adidas-group.com>",
+  "license": "MIT"
+}
