@@ -1,141 +1,146 @@
-import { Heap } from "./Heap"
+import { Heap } from "./Heap";
 import { Sort } from "./Sort";
 import { Equality } from "./Equality";
 
 export class BinaryHeap<T> implements Heap<T> {
+  private items: T[] = [];
+  private sortFunction: Sort<T>;
+  private equalityFunction: Sort<T>;
 
-	private items: T[] = []
-	private sortFunction: Sort<T>
-	private equalityFunction: Sort<T>
+  constructor(
+    sortFunction: Sort<T>,
+    equalityFunction: Equality<T>,
+    items?: T[]
+  ) {
+    this.sortFunction = sortFunction;
+    this.equalityFunction = equalityFunction;
+    items?.forEach((item) => this.push(item));
+  }
 
-	constructor(sortFunction: Sort<T>, equalityFunction: Equality<T>, items?: T[]) {
-		this.sortFunction = sortFunction
-		this.equalityFunction = equalityFunction
-		items?.forEach(item => this.push(item))
-	}
+  peek(): T | undefined {
+    return this.items?.[0];
+  }
 
-	peek(): T | undefined {
-		return this.items?.[0]
-	}
+  push(item: T) {
+    this.items.push(item);
+    this.siftUp(this.length() - 1);
+  }
 
-	push(item: T) {
-		this.items.push(item)
-		this.siftUp(this.length() - 1)
-	}
+  pop(): T | undefined {
+    const [item] = this.items;
+    const lastItem = this.items.pop();
+    if (this.length() > 0 && lastItem) {
+      this.items[0] = lastItem;
+      this.siftDown(0);
+    }
+    return item;
+  }
 
-	pop(): T | undefined {
-		const [item] = this.items
-		const lastItem = this.items.pop()
-		if (this.length() > 0 && lastItem) {
-			this.items[0] = lastItem
-			this.siftDown(0)
-		}
-		return item
-	}
+  remove(item: T) {
+    const indexT = this.items.findIndex((currentItem) =>
+      this.equalityFunction(currentItem, item)
+    );
+    if (indexT === -1) {
+      return;
+    }
 
-	remove(item: T) {
-		const indexT = this.items.findIndex(currentItem => this.equalityFunction(currentItem, item))
-		if (indexT === -1) {
-			return
-		}
+    if (indexT === this.length() - 1) {
+      this.items.pop();
+      return;
+    }
 
-		if (indexT === this.length() - 1) {
-			this.items.pop()
-			return
-		}
+    const lastItem = this.items.pop();
 
-		const lastItem = this.items.pop()
+    if (!lastItem) {
+      return;
+    }
 
-		if (!lastItem) {
-			return
-		}
+    this.items[indexT] = lastItem;
+    this.siftUp(indexT);
+    this.siftDown(indexT);
+  }
 
-		this.items[indexT] = lastItem
-		this.siftUp(indexT)
-		this.siftDown(indexT)
-	}
+  length(): number {
+    return this.items.length;
+  }
 
-	length(): number {
-		return this.items.length
-	}
+  private siftUp(index: number) {
+    let currentIndex = index;
+    let item = this.getItem(currentIndex);
 
-	private siftUp(index: number) {
-		let currentIndex = index
-		let item = this.getItem(currentIndex)
+    while (currentIndex > 0) {
+      const parentIndex = this.getParentIndex(currentIndex);
+      const parent = this.getItem(parentIndex);
 
-		while (currentIndex > 0) {
-			const parentIndex = this.getParentIndex(currentIndex)
-			const parent = this.getItem(parentIndex)
+      if (this.sortFunction(parent, item)) {
+        break;
+      }
 
-			if (this.sortFunction(parent, item)) {
-				break
-			}
+      this.swap(parentIndex, currentIndex);
+      currentIndex = parentIndex;
+    }
+  }
 
-			this.swap(parentIndex, currentIndex)
-			currentIndex = parentIndex
-		}
+  private siftDown(index: number) {
+    const item = this.getItem(index);
+    let currentIndex = index;
 
-	}
+    while (true) {
+      let indexToSwap = null;
+      const leftChildIndex = this.getLeftChildIndex(currentIndex);
+      const rightChildIndex = this.getRightChildIndex(currentIndex);
 
-	private siftDown(index: number) {
-		const item = this.getItem(index)
-		let currentIndex = index
+      if (this.indexExists(leftChildIndex)) {
+        const leftChild = this.getItem(leftChildIndex);
+        indexToSwap = this.needsToSwap(item, leftChild) ? leftChildIndex : null;
+      }
 
-		while (true) {
-			let indexToSwap = null
-			const leftChildIndex = this.getLeftChildIndex(currentIndex)
-			const rightChildIndex = this.getRightChildIndex(currentIndex)
+      if (this.indexExists(rightChildIndex)) {
+        const rightChild = this.getItem(rightChildIndex);
+        const itemOrLeftChild: T =
+          indexToSwap === null ? item : this.getItem(indexToSwap);
+        indexToSwap = this.needsToSwap(itemOrLeftChild, rightChild)
+          ? rightChildIndex
+          : indexToSwap;
+      }
 
-			if (this.indexExists(leftChildIndex)) {
-				const leftChild = this.getItem(leftChildIndex)
-				indexToSwap = this.needsToSwap(item, leftChild) ? leftChildIndex : null
-			}
+      if (indexToSwap == null) {
+        break;
+      }
 
-			if (this.indexExists(rightChildIndex)) {
-				const rightChild = this.getItem(rightChildIndex)
-				const itemOrLeftChild: T = indexToSwap === null ? item : this.getItem(indexToSwap)
-				indexToSwap = this.needsToSwap(itemOrLeftChild, rightChild) ? rightChildIndex : indexToSwap
-			}
+      this.swap(currentIndex, indexToSwap);
+      currentIndex = indexToSwap;
+    }
+  }
 
-			if (indexToSwap == null) {
-				break
-			}
+  private swap(indexA: number, indexB: number) {
+    const a = this.getItem(indexA);
+    const b = this.getItem(indexB);
+    this.items[indexB] = a;
+    this.items[indexA] = b;
+  }
 
-			this.swap(currentIndex, indexToSwap)
-			currentIndex = indexToSwap
-		}
+  private needsToSwap(parent: T, child: T): boolean {
+    return !this.sortFunction(parent, child);
+  }
 
-	}
+  private getItem(index: number): T {
+    return this.items[index];
+  }
 
-	private swap(indexA: number, indexB: number) {
-		const a = this.getItem(indexA)
-		const b = this.getItem(indexB)
-		this.items[indexB] = a
-		this.items[indexA] = b
-	}
+  private getParentIndex(childIndex: number): number {
+    return Math.floor((childIndex + 1) / 2) - 1;
+  }
 
-	private needsToSwap(parent: T, child: T): boolean {
-		return !this.sortFunction(parent, child)
-	}
+  private getLeftChildIndex(parentIndex: number): number {
+    return 2 * parentIndex + 1;
+  }
 
-	private getItem(index: number): T {
-		return this.items[index]
-	}
+  private getRightChildIndex(parentIndex: number): number {
+    return 2 * parentIndex + 2;
+  }
 
-	private getParentIndex(childIndex: number): number {
-		return Math.floor((childIndex + 1) / 2) - 1
-	}
-
-	private getLeftChildIndex(parentIndex: number): number {
-		return 2 * parentIndex + 1
-
-	}
-
-	private getRightChildIndex(parentIndex: number): number {
-		return 2 * parentIndex + 2
-	}
-
-	private indexExists(index: number): boolean {
-		return index < this.length()
-	}
+  private indexExists(index: number): boolean {
+    return index < this.length();
+  }
 }

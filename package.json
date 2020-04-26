@@ -5,5 +5,12 @@
   "main": "index.js",
   "repository": "https://github.com/RPallas92/heap-ts.git",
   "author": "Ricardo Pallas",
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "compile": "tsc",
+    "prettier": "prettier --write ."
+  },
+  "devDependencies": {
+    "prettier": "2.0.5"
+  }
 }

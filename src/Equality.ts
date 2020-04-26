@@ -1,1 +1,1 @@
-export type Equality<T> = (a: T, b: T) => boolean
+export type Equality<T> = (a: T, b: T) => boolean;
