@@ -4,7 +4,7 @@ import { Equality } from "./Equality";
 
 export class BinaryHeap<T> implements Heap<T> {
 
-	private items: T[]
+	private items: T[] = []
 	private sortFunction: Sort<T>
 	private equalityFunction: Sort<T>
 
@@ -26,7 +26,7 @@ export class BinaryHeap<T> implements Heap<T> {
 	pop(): T | undefined {
 		const [item] = this.items
 		const lastItem = this.items.pop()
-		if (this.length() > 0) {
+		if (this.length() > 0 && lastItem) {
 			this.items[0] = lastItem
 			this.siftDown(0)
 		}
@@ -45,6 +45,11 @@ export class BinaryHeap<T> implements Heap<T> {
 		}
 
 		const lastItem = this.items.pop()
+
+		if (!lastItem) {
+			return
+		}
+
 		this.items[indexT] = lastItem
 		this.siftUp(indexT)
 		this.siftDown(indexT)
@@ -74,11 +79,10 @@ export class BinaryHeap<T> implements Heap<T> {
 
 	private siftDown(index: number) {
 		const item = this.getItem(index)
-		const length = this.length()
 		let currentIndex = index
-		let indexToSwap = null
 
 		while (true) {
+			let indexToSwap = null
 			const leftChildIndex = this.getLeftChildIndex(currentIndex)
 			const rightChildIndex = this.getRightChildIndex(currentIndex)
 
@@ -89,7 +93,8 @@ export class BinaryHeap<T> implements Heap<T> {
 
 			if (this.indexExists(rightChildIndex)) {
 				const rightChild = this.getItem(rightChildIndex)
-				indexToSwap = this.needsToSwap(item, rightChild) ? rightChildIndex : null
+				const itemOrLeftChild: T = indexToSwap === null ? item : this.getItem(indexToSwap)
+				indexToSwap = this.needsToSwap(itemOrLeftChild, rightChild) ? rightChildIndex : indexToSwap
 			}
 
 			if (indexToSwap == null) {
