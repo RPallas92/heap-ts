@@ -2,14 +2,21 @@
   "name": "heap-ts",
   "version": "1.0.0",
   "description": "Heap data structure implemented in TypeScript",
-  "main": "index.js",
+  "main": "out/index.js",
+  "types": "out/index.d.ts",
   "repository": "https://github.com/RPallas92/heap-ts.git",
   "author": "Ricardo Pallas",
   "license": "MIT",
+  "files": ["lib/**/*"],
   "scripts": {
     "compile": "tsc",
     "prettier": "prettier --write .",
-    "test": "jest"
+    "test": "jest",
+    "prepare" : "yarn compile",
+    "prepublishOnly" : "yarn test && yarn prettier",
+    "preversion" : "yarn prettier",
+    "version" : "yarn prettier && git add -A src",
+    "postversion" : "git push && git push --tags"
   },
   "devDependencies": {
     "jest": "^25.4.0",
