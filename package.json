@@ -1,6 +1,6 @@
 {
   "name": "heap-ts",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Heap data structure implemented in TypeScript",
   "main": "out/index.js",
   "types": "out/index.d.ts",
