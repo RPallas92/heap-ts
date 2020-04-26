@@ -7,16 +7,18 @@
   "repository": "https://github.com/RPallas92/heap-ts.git",
   "author": "Ricardo Pallas",
   "license": "MIT",
-  "files": ["lib/**/*"],
+  "files": [
+    "lib/**/*"
+  ],
   "scripts": {
     "compile": "tsc",
     "prettier": "prettier --write .",
     "test": "jest",
-    "prepare" : "yarn compile",
-    "prepublishOnly" : "yarn test && yarn prettier",
-    "preversion" : "yarn prettier",
-    "version" : "yarn prettier && git add -A src",
-    "postversion" : "git push && git push --tags"
+    "prepare": "yarn compile",
+    "prepublishOnly": "yarn test && yarn prettier",
+    "preversion": "yarn prettier",
+    "version": "yarn prettier && git add -A src",
+    "postversion": "git push && git push --tags"
   },
   "devDependencies": {
     "jest": "^25.4.0",
