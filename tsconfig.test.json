@@ -1,13 +1,7 @@
 {
-	"extends": "./tsconfig.json",
-	"compilerOptions": {
-		"types": [
-			"reflect-metadata",
-			"jest"
-		]
-	},
-	"exclude": [
-		"node_modules",
-		"out"
-	]
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": ["reflect-metadata", "jest"]
+  },
+  "exclude": ["node_modules", "out"]
 }
