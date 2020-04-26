@@ -8,9 +8,17 @@
   "license": "MIT",
   "scripts": {
     "compile": "tsc",
-    "prettier": "prettier --write ."
+    "prettier": "prettier --write .",
+    "test": "jest"
   },
   "devDependencies": {
-    "prettier": "2.0.5"
+    "jest": "^25.4.0",
+    "prettier": "2.0.5",
+    "test": "jest",
+    "ts-jest": "^25.4.0",
+    "typescript": "^3.8.3"
+  },
+  "dependencies": {
+    "@types/jest": "^25.2.1"
   }
 }
